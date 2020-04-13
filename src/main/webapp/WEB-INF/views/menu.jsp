@@ -74,10 +74,9 @@ String selProfile = (String) request.getAttribute("selProfile");
 		<form:form class="form small" name="frmProfile" method="GET" action="getProfile">
 
 			<div class="form-group row">
-				<div class="col-sm-offset-1 col-sm-10">
 
 				<label class="control-label col-sm-1">Profile:</label>
-				<div class="col-sm-1">
+				<div class="col-sm-10">
 					<select class="selectpicker shadow" name="profile">
 						
 						<!-- If selected profile -->
@@ -123,16 +122,36 @@ String selProfile = (String) request.getAttribute("selProfile");
 						</c:if>
 
 					</select>
-				</div>
-
-				<br>
-				
-				<!-- Get profile -->
-				<button name="btnProfile" class="btn btn-sm btn-primary"
-					onclick="submitForm(this); return false;">Get Profile</button>
-
+					
+					<!-- Get profile -->
+					<button name="btnProfile" class="btn btn-sm btn-primary"
+						onclick="submitForm(this); return false;">Get Profile</button>
+					
 				</div>
 			</div>
+
+			<c:if test="${not empty profiles}">
+
+				<div class="form-group row">
+					<label class="control-label col-sm-1">Name:</label>
+					<div class="col-sm-3">
+						<input class="form-control form-control-sm shadow" type="text" placeholder="${profiles.name}" disabled>
+					</div>
+					
+					<label class="control-label col-sm-1">Study:</label>
+					<div class="col-sm-5">
+						<input class="form-control form-control-sm shadow" type="text" placeholder="${profiles.study}" disabled>
+				    </div>
+				</div>
+
+				<div class="form-group row">
+					<label class="control-label col-sm-1">Type:</label>
+					<div class="col-sm-3">
+						<input class="form-control form-control-sm shadow" type="text" placeholder="${profiles.cancerType}" disabled>
+				    </div>
+				</div>
+			
+			</c:if>
 
 			<!-- Container for error message -->
 			<div id="MsgDiv" class="msgDiv" onclick="hideDiv()">${msg}</div>

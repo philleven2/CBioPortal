@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import cBioPortal.beans.Logs;
+import cBioPortal.beans.Profiles;
 import cBioPortal.resources.CBioPortalBundle;
 import cBioPortal.service.CBioPortalService;
 import cBioPortal.service.LogsService;
@@ -119,8 +120,6 @@ public class MainController {
   @RequestMapping(value = "/getProfile", method = RequestMethod.GET)
   public ModelAndView getProfile(HttpServletRequest req) {
 
-	String result = null;
-	
     ModelAndView model = new ModelAndView("menu");
     
     try (CloseableHttpClient httpClient = CBioPortalUtil.createHttpClient();
@@ -129,10 +128,21 @@ public class MainController {
       String profile = req.getParameter("profile");
     	
       // Get profile
-      result = cBioPortalService.getProfile(profile);
+      Profiles profiles = cBioPortalService.getProfile(profile);
       
+      // Parse name
+      String name = profiles.getName();
+      
+      // If error
+      if (name.contains("Error")) {
+    	  
+          model.addObject("msg", name);
+          return model;
+    	  
+      }
+
       model.addObject("selProfile", profile);
-      model.addObject("msg", result);
+      model.addObject("profiles", profiles);
       
     } catch (SQLException | IOException e) {
       

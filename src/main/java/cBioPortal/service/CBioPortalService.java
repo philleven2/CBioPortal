@@ -2,9 +2,11 @@ package cBioPortal.service;
 
 import java.sql.SQLException;
 
+import cBioPortal.beans.Profiles;
+
 public interface CBioPortalService {
 
-  public String getProfile(String profile) 
+  public Profiles getProfile(String profile) 
 		  throws SQLException;
   
 }
