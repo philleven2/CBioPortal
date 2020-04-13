@@ -1,0 +1,47 @@
+table.custom td {
+	border: 1px solid #ddd;
+	padding-top: 2px;
+	padding-bottom: 2px;
+}
+
+.button3 {
+	padding-top: 0px;
+	padding-left: 0px;
+	padding-right: 0px;
+	font-size: 12px;
+}
+
+.msgDiv {
+	margin-top: 20px;
+	color: red;
+	font-size: 14pts;
+	display: inline-block;
+}
+
+.navbar {
+	font-family: AvenirNextLTPro-It.otf;
+}
+
+.input2 {
+	padding: 9px;
+	border: solid 1px #4B718B;
+	outline: 0;
+	background: -webkit-gradient(linear, left top, left 25, from(#FFFFFF),
+		color-stop(4%, #CDDBE4), to(#FFFFFF));
+	background: -moz-linear-gradient(top, #FFFFFF, #CDDBE4 1px, #FFFFFF 25px);
+	box-shadow: rgba(0, 0, 0, 0.1) 0px 0px 8px;
+	-moz-box-shadow: rgba(0, 0, 0, 0.1) 0px 0px 8px;
+	-webkit-box-shadow: rgba(0, 0, 0, 0.1) 0px 0px 8px;
+}
+
+.form-control {
+	height: 20px;
+}
+
+h6 {
+	font-size: 13px;
+}
+
+.navbar-brand {
+	font-size: small;
+}
