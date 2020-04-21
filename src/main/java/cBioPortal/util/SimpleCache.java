@@ -34,19 +34,23 @@ public class SimpleCache<T> {
 
 	/** Objects are stored here */
 	private final Map<String, T> objects;
+	
 	/** Holds custom expiration dates */
 	private final Map<String, Long> expire;
+	
 	/** The default expiration date */
 	private final long defaultExpire;
+	
 	/** Is used to speed up some operations */
 	private final ExecutorService threads;
 
 	/**
-	 * Constructs the cache with a default expiration time for the objects of
-	 * 100 seconds.
+	 * Constructs the cache with a default expiration time for the objects of 100 seconds.
 	 */
 	public SimpleCache() {
+		
 		this(100);
+		
 	}
 
 	/**
@@ -56,6 +60,7 @@ public class SimpleCache<T> {
 	 *            default expiration time in seconds
 	 */
 	public SimpleCache(final long defaultExpire) {
+		
 		this.objects = Collections.synchronizedMap(new HashMap<String, T>());
 		this.expire = Collections.synchronizedMap(new HashMap<String, Long>());
 
@@ -63,21 +68,32 @@ public class SimpleCache<T> {
 
 		this.threads = Executors.newFixedThreadPool(256);
 		Executors.newScheduledThreadPool(2).scheduleWithFixedDelay(this.removeExpired(), this.defaultExpire / 2, this.defaultExpire, TimeUnit.SECONDS);
+		
 	}
 
 	/**
 	 * This Runnable removes expired objects.
 	 */
 	private final Runnable removeExpired() {
+		
 		return new Runnable() {
-			public void run() {
+			
+			public synchronized void run() {
+				
 				for (final String name : expire.keySet()) {
+					
 					if (System.currentTimeMillis() > expire.get(name)) {
+						
 						threads.execute(createRemoveRunnable(name));
+						
 					}
+					
 				}
+				
 			}
+			
 		};
+		
 	}
 
 	/**
@@ -87,12 +103,18 @@ public class SimpleCache<T> {
 	 *            the name of the object
 	 */
 	private final Runnable createRemoveRunnable(final String name) {
+		
 		return new Runnable() {
+			
 			public void run() {
+				
 				objects.remove(name);
 				expire.remove(name);
+				
 			}
+			
 		};
+		
 	}
 
 	/**
@@ -101,7 +123,9 @@ public class SimpleCache<T> {
 	 * @return default expiration time in seconds
 	 */
 	public long getExpire() {
+		
 		return this.defaultExpire;
+		
 	}
 
 	/**
@@ -112,8 +136,10 @@ public class SimpleCache<T> {
 	 * @param obj
 	 *            the object
 	 */
-	public void put(final String name, final T obj) {
+	public synchronized void put(final String name, final T obj) {
+		
 		this.put(name, obj, this.defaultExpire);
+		
 	}
 
 	/**
@@ -127,8 +153,10 @@ public class SimpleCache<T> {
 	 *            custom expiration time in seconds
 	 */
 	public void put(final String name, final T obj, final long expireTime) {
+		
 		this.objects.put(name, obj);
 		this.expire.put(name, System.currentTimeMillis() + expireTime * 1000);
+		
 	}
 
 	/**
@@ -141,13 +169,20 @@ public class SimpleCache<T> {
 	 * @return the object for the given name and type
 	 */
 	public T get(final String name) {
+		
 		final Long expireTime = this.expire.get(name);
+		
 		if (expireTime == null) return null;
+		
 		if (System.currentTimeMillis() > expireTime) {
+			
 			this.threads.execute(this.createRemoveRunnable(name));
 			return null;
+			
 		}
+		
 		return this.objects.get(name);
+		
 	}
 
 	/**
@@ -155,6 +190,9 @@ public class SimpleCache<T> {
 	 */
 	@SuppressWarnings("unchecked")
 	public <R extends T> R get(final String name, final Class<R> type) {
+		
 		return (R) this.get(name);
+		
 	}
+	
 }

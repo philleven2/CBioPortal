@@ -1,7 +1,6 @@
 package cBioPortal.service;
 
 import java.io.IOException;
-import java.sql.Connection;
 import java.sql.SQLException;
 
 import org.apache.http.HttpEntity;
@@ -18,7 +17,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import cBioPortal.beans.Profiles;
 import cBioPortal.model.Summary;
 import cBioPortal.util.CBioPortalUtil;
-import cBioPortal.util.ConnectionUtil;
 import cBioPortal.util.Mapper;
 import cBioPortal.util.SimpleCache;
 
@@ -43,33 +41,21 @@ public class CBioPortalServiceImpl implements CBioPortalService {
 
 		Profiles profiles = null;
 
-		try (CloseableHttpClient httpClient = CBioPortalUtil.createHttpClient();
-				Connection conn = ConnectionUtil.getConnection();) {
+		try (CloseableHttpClient httpClient = CBioPortalUtil.createHttpClient();) {
 
 			// Get ObjectMapper
 			ObjectMapper mapper = Mapper.INSTANCE.getObjectMapper();
 
-			// Socket Timeout – the time waiting for data – after the connection was
-			// established; maximum time
+			// Socket Timeout – the time waiting for data – after the connection was established; maximum time
 			// of inactivity between two data packets.
-			// Connection Timeout – the time to establish the connection with the remote
-			// host.
-			// Connection Manager Timeout – the time to wait for a connection from the
-			// connection manager/pool.
+			// Connection Timeout – the time to establish the connection with the remote host.
+			// Connection Manager Timeout – the time to wait for a connection from the connection manager/pool.
 
-			// setExpectContinueEnabled(true) activates 'Expect: 100-Continue' handshake for
-			// the entity
-			// enclosing methods.
-			// The 'Expect: 100-Continue' handshake allows a client that is sending a
-			// request message with a request body
-			// to determine if the origin server is willing to accept the request (based on
-			// the request headers) before
-			// the client sends the request body.
+			// setExpectContinueEnabled(true) activates 'Expect: 100-Continue' handshake for the entity enclosing methods.
+			// sends the request body.
 
-			// The use of the 'Expect: 100-continue' handshake can result in noticeable
-			// performance improvement for
-			// entity enclosing requests (such as POST and PUT) that require the target
-			// server's authentication.
+			// The use of the 'Expect: 100-continue' handshake can result in noticeable performance improvement for
+			// entity enclosing requests (such as POST and PUT) that require the target server's authentication.
 
 			// Set timeouts to 1 minute
 			RequestConfig requestConfig = RequestConfig.custom().setSocketTimeout(60000).setConnectTimeout(60000)
@@ -87,8 +73,10 @@ public class CBioPortalServiceImpl implements CBioPortalService {
 
 			do {
 
+				// Is request already cached
 				profiles = cache.get(profile);
 				
+				// If cached request found
 				if (profiles != null) {
 					
 					break;
@@ -195,7 +183,7 @@ public class CBioPortalServiceImpl implements CBioPortalService {
 
 			} while (1 == 1);
 
-		} catch (SQLException | IOException e) {
+		} catch (IOException e) {
 
 			log.error("Error: " + e.getMessage());
 
